@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <script>
+        let url = "https://rickandmortyapi.com/api/character/?page="
+        let operacion = "PorDefecto";
+        let pagina = 0;
+        function personaje(op) {
+            if (op === "PorDefecto") {
+                fetch(url + pagina)
+                    .then(response => response.json())
+                    .then(data => {
+
+                        if (data.info.next === null) {
+                            document.getElementById("f").style.visibility = "hidden";
+
+                        }
+                        if (data.info.prev === null) {
+                            document.getElementById("p").style.visibility = "hidden";
+
+                        }
+                        if (data.info.prev !== null && data.info.next !== null) {
+                            document.getElementById("f").style.visibility = "visible"
+                            document.getElementById("p").style.visibility = "visible"
+
+                        }
+                        //console.log(data)
+                        buscar(data);
+
+                    })
+            } else {
+                if (op === "buscador") {
+                    document.getElementById("f").style.visibility = "visible"
+                    document.getElementById("p").style.visibility = "visible"
+                    operacion = "buscador";
+                }
+                let nombre = document.getElementById("buscador").value;
+                fetch(url + pagina + "&name=" + nombre)
+                    .then(response => response.json())
+                    .then(data => {
+
+                        if (data.info.next === null) {
+                            document.getElementById("f").style.visibility = "hidden";
+
+                        }
+                        if (data.info.prev === null) {
+                            document.getElementById("p").style.visibility = "hidden";
+
+                        }
+                        if (data.info.prev !== null && data.info.next !== null) {
+                            document.getElementById("f").style.visibility = "visible"
+                            document.getElementById("p").style.visibility = "visible"
+
+                        }
+                        //console.log(data)
+                        buscar(data);
+
+
+                    })
+            }
+        }
+        function mostrar(personaje, i) {
+            let aux = document.getElementById("Lista_de_Personajes")
+            let a = document.createElement("div") //juntar todos los divs
+            let img = document.createElement("img")
+            let nom = document.createElement("div")
+            let stat = document.createElement("div") //Status
+            let spe = document.createElement("div")//species
+            let locat = document.createElement("div")//location
+            let epi = document.createElement("div")
+            let atributos = document.createElement("div")
+            let divimg =  document.createElement("div")
+            atributos.className="atrib"
+            img.src = personaje.image
+            img.className = "imagen"
+            a.className = "personaje"
+            a.id = i
+            nom.className = "nombre"
+            stat.className = "status"
+            spe.className = "specie"
+            locat.className = "Location"
+            epi.className = "Episodio"
+            nom.innerHTML = personaje.name
+            stat.innerHTML = personaje.status
+            spe.innerHTML = personaje.species
+            locat.innerHTML = personaje.location.name
+            epi.innerHTML = personaje.episode[0];
+            aux.appendChild(a)
+            document.getElementById(i).appendChild(img);
+            document.getElementById(i).appendChild(atributos);
+            document.getElementsByClassName("atrib")[i].appendChild(nom);
+            document.getElementsByClassName("atrib")[i].appendChild(stat);
+            document.getElementsByClassName("atrib")[i].appendChild(spe);
+            document.getElementsByClassName("atrib")[i].appendChild(locat);
+            document.getElementsByClassName("atrib")[i].appendChild(epi);
+            
+
+        }
+
+
+        function buscar(data) {
+
+            for (let i = 0; i < data.results.length; i++) {
+                console.log(data.results[i]);
+                mostrar(data.results[i], i);
+
+            }
+        }
+        function removeClass() {
+            const elements = document.getElementsByClassName("personaje");
+            while (elements.length > 0) {
+                elements[0].parentNode.removeChild(elements[0]);
+
+            }
+        }
+
+
+    </script>
+    <meta charset="UTF-8">
+    <title>Practica 2</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+
+<body onload="personaje(operacion)">
+    <div id="general">
+        <div class="box">
+            <input id="buscador" type="text" name="search" placeholder="Escribe el personaje a buscar">
+            <button id="p" onclick="pagina--; personaje(operacion), removeClass()">prev</button>
+            <button id="f" onclick="pagina++; personaje(operacion), removeClass()">next</button>
+            <button id="b" onclick="pagina=0,  personaje('buscador'),removeClass() ">buscar</button>
+
+        </div>
+
+        <div id="Lista_de_Personajes">
+
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>
